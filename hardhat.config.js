@@ -56,7 +56,6 @@ module.exports = {
   namedAccounts: {
     deployer: {
       default: 0,
-      // 1: 0,
     },
   },
   etherscan: {
