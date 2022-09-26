@@ -6,8 +6,6 @@ const { developmentChains } = require('../../helper-hardhat-config');
   ? describe.skip
   : describe('Basic NFT Unit Tests', () => {
       let deployer, basicNFT, tokenCounter;
-      const TOKEN_URI =
-        'ipfs://bafybeig37ioir76s7mg5oobetncojcm3c3hxasyd4rvid4jqhy4gkaheg4/?filename=0-PUG.json';
       const { chainId } = network.config;
 
       beforeEach(async () => {
@@ -36,6 +34,7 @@ const { developmentChains } = require('../../helper-hardhat-config');
       describe('tokenURI', () => {
         it('Gets token URI correctly', async () => {
           const tokenURI = await basicNFT.tokenURI(tokenCounter);
+          const TOKEN_URI = await basicNFT.TOKEN_URI();
 
           assert.equal(tokenURI, TOKEN_URI);
         });
