@@ -43,7 +43,8 @@ const { developmentChains } = require('../../helper-hardhat-config');
 
       describe('mintNFT', () => {
         it('Increments token counter correctly', async () => {
-          tokenCounter = await basicNFT.mintNFT();
+          const txResponse = await basicNFT.mintNFT();
+          await txResponse.wait(1);
 
           tokenCounter = (await basicNFT.getTokenCounter()).toNumber();
           assert.equal(tokenCounter, 1);
