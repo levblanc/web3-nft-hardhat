@@ -3,20 +3,29 @@ const {
   developmentChains,
   networkConfig,
 } = require('../helper-hardhat-config');
-const storeImages = require('../utils/uploadToPinata');
+const storeImagesAndMetadata = require('../utils/uploadToPinata');
 const { verify } = require('../utils/verify');
 
-const VRF_SUB_FUND_AMOUNT = ethers.utils.parseEther('30');
+const VRF_SUB_FUND_AMOUNT = '1000000000000000000000';
 const imgFilePath = '../images/randomNFT';
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
   const { chainId } = network.config;
+  // let tokenURIs = [];
+
+  // Uploaded images and metadata to Pinata IPFS
+  // Use the records here and not duplicate uploading again
+  const tokenURIs = [
+    'ipfs://QmaVkBn2tKmjbhphU7eyztbvSQU5EXDdqRyXZtRhSGgJGo',
+    'ipfs://QmYQC5aGZu2PTH8XzbJrbDnvhj3gVs7ya33H9mqUNvST3d',
+    'ipfs://QmZYmH5iDbD6v3U2ixoVAjioSzvWJszDzYdbeCLquGSpVm',
+  ];
 
   // Get the IPFS hashes of images
-  if (process.env.UPLOAD_TO_PINATO === 'true') {
-    await handleTokenURIs();
+  if (process.env.UPLOAD_TO_PINATA === 'true') {
+    tokenURIs = await storeImagesAndMetadata(imgFilePath);
   }
 
   let vrfCoordinatorV2Address, subscriptionId;
@@ -41,46 +50,34 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     subscriptionId = networkConfig[chainId].subscriptionId;
   }
 
-  await storeImages(imgFilePath);
+  const { gasLane, callbackGasLimit, mintFee } = networkConfig[chainId];
 
-  // const { gasLane, callbackGasLimit, mintFee } = networkConfig[chainId];
+  const args = [
+    vrfCoordinatorV2,
+    gasLane,
+    subscriptionId,
+    callbackGasLimit,
+    tokenURIs,
+    mintFee,
+  ];
 
-  // const args = [
-  //   vrfCoordinatorV2,
-  //   gasLane,
-  //   subscriptionId,
-  //   callbackGasLimit,
-  //   dogTokenURIs,
-  //   mintFee,
-  // ];
+  const randomNFT = await deploy('RandomNFT', {
+    from: deployer,
+    args,
+    log: true,
+    waitConfirmations: network.config.blockConfirmations || 1,
+  });
 
-  // const randomNFT = await deploy('RandomNFT', {
-  //   from: deployer,
-  //   args,
-  //   log: true,
-  //   waitConfirmations: network.config.blockConfirmations || 1,
-  // });
+  log('--------------------------------------------------');
 
-  // log('--------------------------------------------------');
+  if (
+    !developmentChains.includes(network.name) &&
+    process.env.ETHERSCAN_API_KEY
+  ) {
+    await verify(randomNFT.address, args);
+  }
 
-  // if (
-  //   !developmentChains.includes(network.name) &&
-  //   process.env.ETHERSCAN_API_KEY
-  // ) {
-  //   await verify(randomNFT.address, args);
-  // }
-
-  // log('--------------------------------------------------');
+  log('--------------------------------------------------');
 };
-
-async function handleTokenURIs() {
-  let tokenURIs = [];
-
-  // Store the image in IPFS
-
-  // Store the metadata in IPFS
-
-  return tokenURIs;
-}
 
 module.exports.tags = ['all', 'randomNFT'];
