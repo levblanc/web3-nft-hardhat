@@ -53,7 +53,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { gasLane, callbackGasLimit, mintFee } = networkConfig[chainId];
 
   const args = [
-    vrfCoordinatorV2,
+    vrfCoordinatorV2Address,
     gasLane,
     subscriptionId,
     callbackGasLimit,
