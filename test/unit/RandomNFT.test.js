@@ -38,13 +38,14 @@ const {
           expect(requestId).to.be.not.null;
         });
 
-        it('Updates sender mapping', async () => {
-          const requestId = await randomNFT.requestNFT({ value: mintFee });
-          console.log('>>>>>> requestId', requestId);
-          // const owner = await randomNFT.getOwner(requestId);
-          // console.log('owner', owner);
+        it('Updates reqeust ID to sender mapping', async () => {
+          const txResponse = await randomNFT.requestNFT({ value: mintFee });
+          // console.log('>>>>>> requestId', requestId);
+          const txReceipt = await txResponse.wait(1);
+          const { requestId } = txReceipt.events[1].args;
 
-          // assert.equal(owner, deployer);
+          const owner = await randomNFT.getOwner(requestId);
+          assert.equal(owner, deployer);
         });
 
         it('Emits an event after request NFT', async () => {
@@ -52,6 +53,53 @@ const {
             randomNFT,
             'NFTRequested'
           );
+        });
+      });
+
+      describe('fulfillRandomWords', () => {
+        it('Picks a random breed, mint NFT, update token counter and set token URI', async () => {
+          await new Promise(async (resolve, reject) => {
+            let dogBreed = null;
+            const tokenCounterStart = randomNFT.getTokenCounter();
+
+            try {
+              // request NFT
+              const tx = await randomNFT.requestNFT({ value: mintFee });
+              const txReceipt = await tx.wait(1);
+
+              // fulfill random words
+              const fulfillResponse =
+                await vrfCoordinatorV2Mock.fulfillRandomWords(
+                  txReceipt.events[1].args.requestId,
+                  randomNFT.address
+                );
+
+              const fulfillReceipt = await fulfillResponse.wait(1);
+              dogBreed = await randomNFT.getDogBreed();
+
+              expect(dogBreed).not.to.be.null;
+            } catch (error) {
+              reject(error);
+            }
+
+            randomNFT.once('NFTMinted', async () => {
+              try {
+                // update token counter
+                const tokenCounterEnd = randomNFT.getTokenCounter();
+                assert(tokenCounterEnd, tokenCounterStart + 1);
+
+                // set token URI
+                const tokenURI = await randomNFT.getDogTokenURI(
+                  dogBreed.toNumber()
+                );
+                assert.equal(tokenURI.toString().includes('ipfs://'), true);
+
+                resolve();
+              } catch (error) {
+                reject(error);
+              }
+            });
+          });
         });
       });
     });

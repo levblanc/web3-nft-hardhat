@@ -39,6 +39,7 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // NFT Variables
     uint256 public s_tokenCounter;
     uint256 internal constant MAX_CHANCE_VALUE = 100;
+    Breed internal s_dogBreed;
     string[] internal s_dogTokenURIs;
     uint256 internal i_mintFee;
 
@@ -63,12 +64,13 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     }
 
     // Users have to pay to mint an NFT
-    function requestNFT() public payable returns (uint256 requestId) {
+    // function requestNFT() public payable returns (uint256 requestId) {
+    function requestNFT() public payable {
         if (msg.value < i_mintFee) {
             revert RandomNFT__MintFeeNotEnough();
         }
 
-        requestId = i_vrfCoordinator.requestRandomWords(
+        uint256 requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane, // keyHash
             i_subscriptionId,
             REQUEST_CONFIRMATIONS,
@@ -89,14 +91,14 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         uint256 newTokenId = s_tokenCounter;
         uint256 moddedRng = randomWords[0] % MAX_CHANCE_VALUE;
 
-        Breed dogBreed = getBreedFromModdedRng(moddedRng);
+        s_dogBreed = getBreedFromModdedRng(moddedRng);
         // Update token counter
         s_tokenCounter += s_tokenCounter; // => s_tokenCounter + 1
 
         _safeMint(dogOwner, newTokenId);
-        _setTokenURI(newTokenId, s_dogTokenURIs[uint256(dogBreed)]);
+        _setTokenURI(newTokenId, s_dogTokenURIs[uint256(s_dogBreed)]);
 
-        emit NFTMinted(dogBreed, dogOwner);
+        emit NFTMinted(s_dogBreed, dogOwner);
     }
 
     // The owner of the contract can withdraw the ETH
@@ -136,6 +138,14 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
 
     function getMintFee() public view returns (uint256) {
         return i_mintFee;
+    }
+
+    function getOwner(uint256 requestId) public view returns (address) {
+        return s_requestIdToSender[requestId];
+    }
+
+    function getDogBreed() public view returns (uint256) {
+        return uint256(s_dogBreed);
     }
 
     function getDogTokenURI(uint256 index) public view returns (string memory) {
