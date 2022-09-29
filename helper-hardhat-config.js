@@ -23,7 +23,17 @@ const networkConfig = {
 
 const developmentChains = ['hardhat', 'localhost'];
 
+const BASE_FEE = ethers.utils.parseEther('0.25');
+// LINK per gas. Calculated value based on the gas price of the chain
+const GAS_PRICE_LINK = 1e9; // 1000000000
+const DECIMALS = 8;
+const INITIAL_ANSWER = 200000000000;
+
 module.exports = {
   networkConfig,
   developmentChains,
+  BASE_FEE,
+  GAS_PRICE_LINK,
+  DECIMALS,
+  INITIAL_ANSWER,
 };

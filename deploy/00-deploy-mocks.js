@@ -1,23 +1,34 @@
 const { network, ethere } = require('hardhat');
-const { developmentChains } = require('../helper-hardhat-config');
-
-const BASE_FEE = ethers.utils.parseEther('0.25');
-// LINK per gas. Calculated value based on the gas price of the chain
-const GASE_PRICE_LINK = 1e9; // 1000000000
+const {
+  developmentChains,
+  BASE_FEE,
+  GAS_PRICE_LINK,
+  DECIMALS,
+  INITIAL_ANSWER,
+} = require('../helper-hardhat-config');
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
-  const args = [BASE_FEE, GASE_PRICE_LINK];
+  const VRFCoordinatorV2MockArgs = [BASE_FEE, GAS_PRICE_LINK];
+  const MockV3AggregatorArgs = [DECIMALS, INITIAL_ANSWER];
+  const isLocalNetwork = developmentChains.includes(network.name);
 
-  if (developmentChains.includes(network.name)) {
+  if (isLocalNetwork) {
     log('>>>>>> Local network detected! Deploying mocks...');
 
     await deploy('VRFCoordinatorV2Mock', {
       contract: '',
       from: deployer,
       log: true,
-      args,
+      args: VRFCoordinatorV2MockArgs,
+    });
+
+    await deploy('MockV3Aggregator', {
+      contract: '',
+      from: deployer,
+      log: true,
+      args: MockV3AggregatorArgs,
     });
   }
 
