@@ -37,11 +37,11 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     mapping(uint256 => address) public s_requestIdToSender;
 
     // NFT Variables
-    uint256 public s_tokenCounter;
+    uint256 private s_tokenCounter;
     uint256 internal constant MAX_CHANCE_VALUE = 100;
     Breed internal s_dogBreed;
     string[] internal s_dogTokenURIs;
-    uint256 internal i_mintFee;
+    uint256 internal immutable i_mintFee;
 
     // Events
     event NFTRequested(uint256 indexed requestId, address requester);
