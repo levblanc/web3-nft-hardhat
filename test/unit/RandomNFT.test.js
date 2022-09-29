@@ -90,7 +90,7 @@ const {
 
                 // set token URI
                 const tokenURI = await randomNFT.getDogTokenURI(
-                  dogBreed.toNumber()
+                  dogBreed.toString()
                 );
                 assert.equal(tokenURI.toString().includes('ipfs://'), true);
 
@@ -100,6 +100,90 @@ const {
               }
             });
           });
+        });
+      });
+
+      describe('withdraw', () => {
+        it('Owner can withdraw the money successfully', async () => {
+          const contractStartingBalance = await randomNFT.provider.getBalance(
+            randomNFT.address
+          );
+          const deployerStartingBalance = await randomNFT.provider.getBalance(
+            deployer
+          );
+          console.log(
+            '>>>>>> contractStartingBalance',
+            contractStartingBalance.toString()
+          );
+          console.log(
+            '>>>>>> deployerStartingBalance',
+            deployerStartingBalance.toString()
+          );
+
+          console.log('------------------------------------------------------');
+
+          // Act
+          const requestTx = await randomNFT.requestNFT({ value: mintFee });
+          const { gasUsed: reqGasUsed, effectiveGasPrice: reqGasPrice } =
+            await requestTx.wait(1);
+          const reqGasCost = reqGasUsed.mul(reqGasPrice);
+
+          const contractBalanceUponRequest =
+            await randomNFT.provider.getBalance(randomNFT.address);
+
+          console.log(
+            '>>>>>> contractBalanceUponRequest',
+            contractBalanceUponRequest.toString()
+          );
+
+          console.log('------------------------------------------------------');
+
+          const withdrawTx = await randomNFT.withdraw();
+          const {
+            gasUsed: withdrawGasUsed,
+            effectiveGasPrice: withdrawGasPrice,
+          } = await withdrawTx.wait(1);
+          const withdrawGasCost = withdrawGasUsed.mul(withdrawGasPrice);
+
+          const contractEndingBalance = await randomNFT.provider.getBalance(
+            randomNFT.address
+          );
+          const deployerEndingBalance = await randomNFT.provider.getBalance(
+            deployer
+          );
+
+          console.log('>>>>>> reqGasCost', reqGasCost.toString());
+          console.log('>>>>>> withdrawGasCost', withdrawGasCost.toString());
+          console.log('------------------------------------------------------');
+          console.log(
+            '>>>>>> contractEndingBalance',
+            contractEndingBalance.toString()
+          );
+          console.log(
+            '>>>>>> deployerEndingBalance',
+            deployerEndingBalance.toString()
+          );
+
+          // Assert
+          assert.equal(contractEndingBalance, 0);
+          assert.equal(
+            deployerEndingBalance,
+            deployerStartingBalance
+              .add(reqGasCost)
+              .add(withdrawGasCost)
+              .add(mintFee)
+          );
+        });
+
+        it('Only allows the owner to withdraw', async () => {
+          const accounts = await ethers.getSigners();
+          const attacker = accounts[1];
+
+          const attackerConnectedContract = await randomNFT.connect(attacker);
+
+          await expect(attackerConnectedContract.withdraw()).to.be.revertedWith(
+            'Ownable: caller is not the owner'
+          );
         });
       });
     });
