@@ -124,9 +124,11 @@ const {
 
           // Act
           const requestTx = await randomNFT.requestNFT({ value: mintFee });
-          const { gasUsed: reqGasUsed, effectiveGasPrice: reqGasPrice } =
-            await requestTx.wait(1);
-          const reqGasCost = reqGasUsed.mul(reqGasPrice);
+          const {
+            gasUsed: requestGasUsed,
+            effectiveGasPrice: requestGasPrice,
+          } = await requestTx.wait(1);
+          const requestGasCost = requestGasUsed.mul(requestGasPrice);
 
           const contractBalanceUponRequest =
             await randomNFT.provider.getBalance(randomNFT.address);
@@ -152,7 +154,7 @@ const {
             deployer
           );
 
-          console.log('>>>>>> reqGasCost', reqGasCost.toString());
+          console.log('>>>>>> requestGasCost', requestGasCost.toString());
           console.log('>>>>>> withdrawGasCost', withdrawGasCost.toString());
           console.log('------------------------------------------------------');
           console.log(
@@ -169,7 +171,7 @@ const {
           assert.equal(
             deployerEndingBalance,
             deployerStartingBalance
-              .add(reqGasCost)
+              .add(requestGasCost)
               .add(withdrawGasCost)
               .add(mintFee)
           );
