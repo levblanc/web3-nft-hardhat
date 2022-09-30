@@ -1,5 +1,5 @@
 const { expect, assert } = require('chai');
-const { getNameAccounts, deployments, ethers, network } = require('hardhat');
+const { getNamedAccounts, deployments, ethers, network } = require('hardhat');
 const {
   developmentChains,
   networkConfig,
