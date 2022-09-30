@@ -186,4 +186,30 @@ const {
           );
         });
       });
+
+      describe('getBreedFromModdedRng', () => {
+        it('Returns pug if moddedRng is 0 - 9', async () => {
+          const breed = await randomNFT.getBreedFromModdedRng(5);
+          expect(0, breed);
+        });
+
+        it('Returns shiba-inu if moddedRng is 10 - 29', async () => {
+          const breed = await randomNFT.getBreedFromModdedRng(25);
+          expect(1, breed);
+        });
+
+        it('Returns st. bernard if moddedRng is 30 - 99', async () => {
+          const breed = await randomNFT.getBreedFromModdedRng(45);
+          expect(2, breed);
+        });
+
+        it('Reverts if moddedRng is > 99', async () => {
+          await expect(
+            randomNFT.getBreedFromModdedRng(100)
+          ).to.be.revertedWithCustomError(
+            randomNFT,
+            'RandomNFT__RangeOutOfBounds'
+          );
+        });
+      });
     });
