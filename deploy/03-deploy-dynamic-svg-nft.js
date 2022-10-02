@@ -48,4 +48,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   }
 };
 
-module.exports.tags = ['all', 'dynamicSvgNFT'];
+module.exports.tags = ['all', 'dynamicSvgNFT', 'contract'];

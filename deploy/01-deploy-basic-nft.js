@@ -28,4 +28,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   log('-----------------------------------------');
 };
 
-module.exports.tags = ['all', 'basicNFT'];
+module.exports.tags = ['all', 'basicNFT', 'contract'];
