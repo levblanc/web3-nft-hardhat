@@ -59,6 +59,8 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
+        // Image stored on Pinata IPFS service
+        // See deployment script for image URIs
         s_dogTokenURIs = dogTokenURIs;
         i_mintFee = mintFee;
     }

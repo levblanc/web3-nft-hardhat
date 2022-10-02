@@ -40,6 +40,7 @@ contract DynamicSvgNFT is ERC721 {
         return string(abi.encodePacked(base64ImgPrefix, base64EncodedSVG));
     }
 
+    // Store both meta data & image data on chain
     function tokenURI(uint256 tokenId)
         public
         view
