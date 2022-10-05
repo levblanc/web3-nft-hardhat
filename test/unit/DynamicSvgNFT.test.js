@@ -84,13 +84,16 @@ const {
             dynamicSvgNFT.once('CreatedNFT', async () => {
               // update token counter
               const tokenCounterEnd = await dynamicSvgNFT.getTokenCounter();
-              assert(tokenCounterEnd, tokenCounterStart + 1);
+              assert.equal(
+                tokenCounterEnd.toNumber(),
+                tokenCounterStart.toNumber() + 1
+              );
 
               // updates token Id to high value mapping
               const highValueResult = await dynamicSvgNFT.getTokenIdToHighValue(
                 tokenCounterStart
               );
-              assert(highValueResult, highValue);
+              assert.equal(highValueResult, highValue);
             });
           });
         });
