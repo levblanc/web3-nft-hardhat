@@ -28,14 +28,11 @@ module.exports = {
     hardhat: {
       chainId: 31337,
       blockConfirmations: 1,
-      forking: {
-        // url: GOERLI_RPC_URL,
-        url: ETHEREUM_MAINNET_RPC_URL,
-      },
     },
     localhost: {
       chainId: 31337,
       blockConfirmations: 1,
+      url: 'http://127.0.0.1:8545',
     },
     rinkeby: {
       chainId: 4,
@@ -48,10 +45,6 @@ module.exports = {
       blockConfirmations: 6,
       url: GOERLI_RPC_URL,
       accounts: [PRIVATE_KEY],
-    },
-    localhost: {
-      chainId: 31137,
-      url: 'http://127.0.0.1:8545',
     },
   },
   namedAccounts: {

@@ -21,11 +21,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     !developmentChains.includes(network.name) &&
     process.env.ETHERSCAN_API_KEY
   ) {
-    log('Verifying...');
     await verify(basicNFT.address, args);
   }
 
   log('-----------------------------------------');
 };
 
-module.exports.tags = ['all', 'basicNFT'];
+module.exports.tags = ['all', 'basicNFT', 'contract'];

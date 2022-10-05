@@ -5,6 +5,7 @@ import '@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol';
 import '@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
+import 'hardhat/console.sol';
 
 error RandomNFT__RangeOutOfBounds();
 error RandomNFT__MintFeeNotEnough();
@@ -59,6 +60,8 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
+        // Image stored on Pinata IPFS service
+        // See deployment script for image URIs
         s_dogTokenURIs = dogTokenURIs;
         i_mintFee = mintFee;
     }
@@ -93,7 +96,7 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
 
         s_dogBreed = getBreedFromModdedRng(moddedRng);
         // Update token counter
-        s_tokenCounter += s_tokenCounter; // => s_tokenCounter + 1
+        s_tokenCounter = s_tokenCounter + 1;
 
         _safeMint(dogOwner, newTokenId);
         _setTokenURI(newTokenId, s_dogTokenURIs[uint256(s_dogBreed)]);
@@ -104,6 +107,9 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // The owner of the contract can withdraw the ETH
     function withdraw() public onlyOwner {
         uint256 amount = address(this).balance;
+        console.log('>>>>>> withdraw amount', amount);
+        console.log('>>>>>> withdraw msg.sender', msg.sender);
+
         (bool success, ) = payable(msg.sender).call{value: amount}('');
 
         if (!success) {

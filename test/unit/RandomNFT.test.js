@@ -60,7 +60,7 @@ const {
         it('Picks a random breed, mint NFT, update token counter and set token URI', async () => {
           await new Promise(async (resolve, reject) => {
             let dogBreed = null;
-            const tokenCounterStart = randomNFT.getTokenCounter();
+            const tokenCounterStart = await randomNFT.getTokenCounter();
 
             try {
               // request NFT
@@ -85,14 +85,22 @@ const {
             randomNFT.once('NFTMinted', async () => {
               try {
                 // update token counter
-                const tokenCounterEnd = randomNFT.getTokenCounter();
-                assert(tokenCounterEnd, tokenCounterStart + 1);
+                const tokenCounterEnd = await randomNFT.getTokenCounter();
+                assert.equal(
+                  tokenCounterEnd.toNumber(),
+                  tokenCounterStart.toNumber() + 1
+                );
 
                 // set token URI
                 const tokenURI = await randomNFT.getDogTokenURI(
-                  dogBreed.toString()
+                  // dogBreed.toString()
+                  dogBreed
                 );
-                assert.equal(tokenURI.toString().includes('ipfs://'), true);
+                const expectedTokenURI = await randomNFT.tokenURI(
+                  tokenCounterStart
+                );
+                // assert.equal(tokenURI.toString().includes('ipfs://'), true);
+                assert.equal(expectedTokenURI, tokenURI);
 
                 resolve();
               } catch (error) {
@@ -128,6 +136,7 @@ const {
             gasUsed: requestGasUsed,
             effectiveGasPrice: requestGasPrice,
           } = await requestTx.wait(1);
+
           const requestGasCost = requestGasUsed.mul(requestGasPrice);
 
           const contractBalanceUponRequest =
@@ -154,6 +163,8 @@ const {
             deployer
           );
 
+          console.log('>>>>>> deployer address', deployer);
+          console.log('------------------------------------------------------');
           console.log('>>>>>> requestGasCost', requestGasCost.toString());
           console.log('>>>>>> withdrawGasCost', withdrawGasCost.toString());
           console.log('------------------------------------------------------');
@@ -169,11 +180,13 @@ const {
           // Assert
           assert.equal(contractEndingBalance, 0);
           assert.equal(
-            deployerEndingBalance,
-            deployerStartingBalance
+            // 2. spend gas on request & withdraw
+            deployerEndingBalance
               .add(requestGasCost)
               .add(withdrawGasCost)
-              .add(mintFee)
+              .toString(),
+            // 1. withdraws mint fee to deployer account
+            deployerStartingBalance.add(mintFee).toString()
           );
         });
 
@@ -186,6 +199,16 @@ const {
           await expect(attackerConnectedContract.withdraw()).to.be.revertedWith(
             'Ownable: caller is not the owner'
           );
+        });
+
+        it('Reverts if withdraw fails', async () => {
+          // const accounts = await ethers.getSigners();
+          // const attacker = accounts[1];
+          // const attackerConnectedContract = await randomNFT.connect(attacker);
+          // await expect(randomNFT.withdraw()).to.be.revertedWithCustomError(
+          //   randomNFT,
+          //   'RandomNFT__WithdrawFailed'
+          // );
         });
       });
 

@@ -40,6 +40,7 @@ contract DynamicSvgNFT is ERC721 {
         return string(abi.encodePacked(base64ImgPrefix, base64EncodedSVG));
     }
 
+    // Store both meta data & image data on chain
     function tokenURI(uint256 tokenId)
         public
         view
@@ -50,12 +51,13 @@ contract DynamicSvgNFT is ERC721 {
         if (!_exists(tokenId)) {
             revert DynamicSvgNFT__TokenNotExsit();
         }
+
         string memory base64JsonPrefix = 'data:application/json;base64,';
         string memory imageURI = s_lowImgURI;
 
         (, int256 price, , , ) = i_priceFeed.latestRoundData();
 
-        if (price >= s_tokenIdToHighValue[tokenId]) {
+        if (price < s_tokenIdToHighValue[tokenId]) {
             imageURI = s_highImgURI;
         }
 
@@ -67,7 +69,7 @@ contract DynamicSvgNFT is ERC721 {
                         bytes(
                             abi.encodePacked(
                                 '{"name":"',
-                                name(), // You can add whatever name here
+                                name(),
                                 '", "description":"An NFT that changes based on the Chainlink Feed", ',
                                 '"attributes": [{"trait_type": "coolness", "value": 100}], "image":"',
                                 imageURI,
@@ -81,10 +83,35 @@ contract DynamicSvgNFT is ERC721 {
 
     function mintNFT(int256 highValue) public {
         s_tokenIdToHighValue[s_tokenCounter] = highValue;
-        s_tokenCounter = s_tokenCounter + 1;
 
         _safeMint(msg.sender, s_tokenCounter);
 
+        s_tokenCounter = s_tokenCounter + 1;
+
         emit CreatedNFT(s_tokenCounter, highValue);
+    }
+
+    function getLowImgURI() public view returns (string memory) {
+        return s_lowImgURI;
+    }
+
+    function getHighImgURI() public view returns (string memory) {
+        return s_highImgURI;
+    }
+
+    function getPriceFeed() public view returns (AggregatorV3Interface) {
+        return i_priceFeed;
+    }
+
+    function getTokenCounter() public view returns (uint256) {
+        return s_tokenCounter;
+    }
+
+    function getTokenIdToHighValue(uint256 tokenId)
+        public
+        view
+        returns (int256)
+    {
+        return s_tokenIdToHighValue[tokenId];
     }
 }
