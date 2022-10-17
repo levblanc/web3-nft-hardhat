@@ -40,7 +40,6 @@ const {
 
         it('Updates reqeust ID to sender mapping', async () => {
           const txResponse = await randomNFT.requestNFT({ value: mintFee });
-          // console.log('>>>>>> requestId', requestId);
           const txReceipt = await txResponse.wait(1);
           const { requestId } = txReceipt.events[1].args;
 
@@ -119,16 +118,6 @@ const {
           const deployerStartingBalance = await randomNFT.provider.getBalance(
             deployer
           );
-          console.log(
-            '>>>>>> contractStartingBalance',
-            contractStartingBalance.toString()
-          );
-          console.log(
-            '>>>>>> deployerStartingBalance',
-            deployerStartingBalance.toString()
-          );
-
-          console.log('------------------------------------------------------');
 
           // Act
           const requestTx = await randomNFT.requestNFT({ value: mintFee });
@@ -141,13 +130,6 @@ const {
 
           const contractBalanceUponRequest =
             await randomNFT.provider.getBalance(randomNFT.address);
-
-          console.log(
-            '>>>>>> contractBalanceUponRequest',
-            contractBalanceUponRequest.toString()
-          );
-
-          console.log('------------------------------------------------------');
 
           const withdrawTx = await randomNFT.withdraw();
           const {
@@ -163,30 +145,14 @@ const {
             deployer
           );
 
-          console.log('>>>>>> deployer address', deployer);
-          console.log('------------------------------------------------------');
-          console.log('>>>>>> requestGasCost', requestGasCost.toString());
-          console.log('>>>>>> withdrawGasCost', withdrawGasCost.toString());
-          console.log('------------------------------------------------------');
-          console.log(
-            '>>>>>> contractEndingBalance',
-            contractEndingBalance.toString()
-          );
-          console.log(
-            '>>>>>> deployerEndingBalance',
-            deployerEndingBalance.toString()
-          );
-
           // Assert
           assert.equal(contractEndingBalance, 0);
           assert.equal(
-            // 2. spend gas on request & withdraw
-            deployerEndingBalance
-              .add(requestGasCost)
-              .add(withdrawGasCost)
-              .toString(),
-            // 1. withdraws mint fee to deployer account
-            deployerStartingBalance.add(mintFee).toString()
+            deployerEndingBalance.toString(),
+            deployerStartingBalance
+              .sub(requestGasCost)
+              .sub(withdrawGasCost)
+              .toString()
           );
         });
 

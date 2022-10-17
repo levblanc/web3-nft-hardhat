@@ -107,8 +107,6 @@ contract RandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // The owner of the contract can withdraw the ETH
     function withdraw() public onlyOwner {
         uint256 amount = address(this).balance;
-        console.log('>>>>>> withdraw amount', amount);
-        console.log('>>>>>> withdraw msg.sender', msg.sender);
 
         (bool success, ) = payable(msg.sender).call{value: amount}('');
 
