@@ -145,6 +145,9 @@ yarn format
 - [x] Deployment scripts
 - [x] Uploading Token Images & Token URIs (metadata) with Pinata
 - [x] Unit tests for all NFTs
+- [x] Base64 encoding / decoding
+- [x] EVM opcodes, ABI encoding functions & call functions directly from
+      contract
 
 #
 
