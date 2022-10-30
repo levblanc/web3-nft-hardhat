@@ -1,75 +1,168 @@
-# web3-nft-hardhat
+<a name="readme-top"></a>
 
-## Deploy contracts & mint NFT
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/levblanc/web3-blockchain-solidity-course-js">
+    <img src="./images/blockchain.svg" alt="Logo" width="100" height="100">
+  </a>
 
-```zsh
-# Deploy at localhost
-yarn run deploy
+  <h2 align="center">Web3, Full Stack Solidity, Smart Contract & Blockchain development with JavaScript</h2>
 
-# Spin up local node
-yarn run localhost
+  <p align="center">
+    My Web3 full stack Solicity smart contract & blockchain development journey along with 
+    <br />
+    <a href="https://youtu.be/gyMwXuJrbJQ"> » this course from Patrick Collins</a>
+  </p>
+</div>
 
-# Mint locally (spin up local node before minting)
-yarn run mint:local
+<br />
 
-# Deploy to testnet (now set to goerli)
-yarn run deploy:goerli
+<div align="center">
+  <p align="center">
+    <a href="https://github.com/levblanc/web3-nft-hardhat"><img src="https://img.shields.io/badge/challenge%2007-Hardhat%20--%20NFTs%20(lesson%2014)-4D21FC?style=for-the-badge&logo=blockchaindotcom" height="35" alt='challenge-07' /></a>
+  </p>
 
-# Mint on testnet
-yarn run mint:goerli
+<a href="https://github.com/levblanc/web3-nft-hardhat">View Code</a> ·
+<a href="https://github.com/levblanc/web3-blockchain-solidity-course-js">Check
+My Full Journey</a>
+
+</div>
+
+<br />
+
+<!-- GETTING STARTED -->
+
+## Getting Started
+
+1. Clone the repo
+
+```sh
+git clone https://github.com/levblanc/web3-nft-hardhat.git
 ```
 
-## Testing
+2. Install dependencies with `yarn install` or `npm install`
 
-```zsh
-# Run tests
-yarn run test
+3. Create a `.env` file under project's root directory
 
-# Run tests and show coverage report
-yarn run coverage
+```.env
+PRIVATE_KEY=private_key_of_your_wallet
+ETHERSCAN_API_KEY=your_etherscan_api_key
+GOERLI_RPC_URL=rpc_url_from_provider
+PINATA_API_KEY=pinata_api_key
+PINATA_API_SECRET=pinata_api_secret
+UPLOAD_TO_PINATA=boolean_of_your_choice
 ```
 
-## Code Linting & Formating
+<!-- USAGE EXAMPLES -->
+
+## Usage
+
+For local development:
 
 ```zsh
-# Lint contract files
-yarn run lint
+# spin up hardhat local node
+yarn localhost
 
-# Lint & Fix contract files
-yarn run lint:fix
+# deploy contract
+yarn deploy:local
 
-# Format codes with Prettier
-yarn run format
+# Run `mint` function
+yarn mint:local
 ```
 
-## Goerli Address to play with
+For Goerli testnet:
+
 ```zsh
-deploying "BasicNFT" (tx: 0xe1debb4c4ad4590c64ba35a2e35342a0d22ce64935d47e2d78f0e8f0bcb1c1ae)...: deployed at 0x2a9746d1b4b1b3B745ec65045c8F4B04c91eAc4F with 2017613 gas
-Verifying...
->>>>>> Verifying contract ...
-Successfully submitted source code for contract
-contracts/BasicNFT.sol:BasicNFT at 0x2a9746d1b4b1b3B745ec65045c8F4B04c91eAc4F
-for verification on the block explorer. Waiting for verification result...
+# deploy contract to Goerli
+yarn deploy:goerli
 
-Successfully verified contract BasicNFT on Etherscan.
-https://goerli.etherscan.io/address/0x2a9746d1b4b1b3B745ec65045c8F4B04c91eAc4F#code
------------------------------------------
-deploying "RandomNFT" (tx: 0x4a7afba3196b54ae3c63504ed8e408df0ce8b09d521880ceb1c6bdc46d96b647)...: deployed at 0xf04F7BF40FC3e8543B4826cB0a8285B518788400 with 3604295 gas
->>>>>> Verifying contract ...
-Successfully submitted source code for contract
-contracts/RandomNFT.sol:RandomNFT at 0xf04F7BF40FC3e8543B4826cB0a8285B518788400
-for verification on the block explorer. Waiting for verification result...
-
-Successfully verified contract RandomNFT on Etherscan.
-https://goerli.etherscan.io/address/0xf04F7BF40FC3e8543B4826cB0a8285B518788400#code
---------------------------------------------------
-deploying "DynamicSvgNFT" (tx: 0x995d78a70b4a9f087a4350e50d75b04aa0f1d6e02fd892515a646d3df174f66f)...: deployed at 0x7ec8879756309b9EeeeA14b40FcE878775158557 with 4381072 gas
->>>>>> Verifying contract ...
-Nothing to compile
-Successfully submitted source code for contract
-contracts/DynamicSvgNFT.sol:DynamicSvgNFT at 0x7ec8879756309b9EeeeA14b40FcE878775158557
-for verification on the block explorer. Waiting for verification result...
-
-Successfully verified contract DynamicSvgNFT on Etherscan.
-https://goerli.etherscan.io/address/0x7ec8879756309b9EeeeA14b40FcE878775158557#code
+# Run `mint` function
+yarn mint:goerli
 ```
+
+Run tests
+
+```zsh
+# Run unit tests
+yarn test
+```
+
+Check tests coverage
+
+```zsh
+yarn coverage
+```
+
+[Optional] Generate converage report
+
+```js
+// hardhat.config.js
+module.exports = {
+  // ... other configs
+  gasReporter: {
+    enabled: true, // set to true when needs a report
+  },
+};
+```
+
+Lint Solidity files
+
+```zsh
+# Lint only
+yarn lint
+
+# Lint & fix
+yarn lint:fix
+```
+
+Code formatting
+
+```zsh
+yarn format
+```
+
+## Skills
+
+- [![Solidity]](https://soliditylang.org/)
+- [![JavaScript]](https://developer.mozilla.org/fr/docs/Web/JavaScript)
+- [![Hardhat]](https://hardhat.org/)
+- [![Chai]](https://www.chaijs.com/)
+- [![Mocha]](https://mochajs.org/)
+- [![Chainlink]](https://chain.link/)
+- [![Pinata]](https://www.pinata.cloud/)
+
+<!-- ROADMAP -->
+
+## Roadmap
+
+- [x] What is an NFT?
+- [x] Basic NFT contract & tests
+- [x] Creating an ERC20 Token with Openzeppelin
+- [x] Random IPFS NFT - Mapping Chainlink VRF Requests
+- [x] Random IPFS NFT - Creating Rare NFTs
+- [x] Random IPFS NFT - Setting the NFT Image & Mint Price
+- [x] Deployment scripts
+- [x] Uploading Token Images & Token URIs (metadata) with Pinata
+- [x] Unit tests for all NFTs
+
+#
+
+### [» Check the main repo of my full web3 journey](https://github.com/levblanc/web3-blockchain-solidity-course-js)
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[solidity]:
+  https://img.shields.io/badge/solidity-1E1E3F?style=for-the-badge&logo=solidity
+[javascript]:
+  https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black
+[hardhat]:
+  https://custom-icon-badges.demolab.com/badge/Hardhat-181A1F?style=for-the-badge&logo=hardhat
+[chai]: https://img.shields.io/badge/Chai-94161F?style=for-the-badge&logo=Chai
+[mocha]:
+  https://custom-icon-badges.demolab.com/badge/Mocha-8D6748?style=for-the-badge&logo=mocha&logoColor=white
+[chainlink]:
+  https://img.shields.io/badge/chainlink-375bd2?style=for-the-badge&logo=chainlink
+[pinata]:
+  https://custom-icon-badges.demolab.com/badge/Pinata-350462?style=for-the-badge&logo=pinata
