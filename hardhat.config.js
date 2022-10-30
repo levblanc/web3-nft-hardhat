@@ -3,13 +3,8 @@ require('hardhat-deploy');
 require('hardhat-contract-sizer');
 require('dotenv').config();
 
-const {
-  RINKEBY_RPC_URL,
-  GOERLI_RPC_URL,
-  ETHEREUM_MAINNET_RPC_URL,
-  PRIVATE_KEY,
-  ETHERSCAN_API_KEY,
-} = process.env;
+const { RINKEBY_RPC_URL, GOERLI_RPC_URL, PRIVATE_KEY, ETHERSCAN_API_KEY } =
+  process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
