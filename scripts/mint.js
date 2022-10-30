@@ -38,16 +38,20 @@ const mintNFT = async () => {
   const randomNFT = await ethers.getContract('RandomNFT', deployer);
   const randomNFTMintFee = await randomNFT.getMintFee();
 
-  const requestRandomNFT = await randomNFT.requestNFT({
-    value: randomNFTMintFee,
-  });
-  const randomNFTReceipt = await requestRandomNFT.wait(1);
-
   await new Promise(async (resolve, reject) => {
     setTimeout(() => {
       reject('>>>>>> NFTRequested event timeout!');
     }, 900000); // 15 mins timeout time
 
+    const randomNFTTokenId = await randomNFT.getTokenCounter();
+
+    // request NFT
+    const requestRandomNFT = await randomNFT.requestNFT({
+      value: randomNFTMintFee,
+    });
+    const randomNFTReceipt = await requestRandomNFT.wait(1);
+
+    // fulfill random words
     if (isLocalNetwork) {
       const { requestId } = await randomNFTReceipt.events[1].args;
       const vrfCoordinatorV2Mock = await ethers.getContract(
@@ -61,8 +65,7 @@ const mintNFT = async () => {
       );
     }
 
-    randomNFT.once('NFTRequested', async () => {
-      const randomNFTTokenId = await randomNFT.getTokenCounter();
+    randomNFT.once('NFTMinted', async () => {
       const randomNFTTokenURI = await randomNFT.tokenURI(randomNFTTokenId);
 
       console.log('>>>>>> Random NFT minted! Token URI is:');
